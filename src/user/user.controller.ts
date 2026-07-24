@@ -1,7 +1,18 @@
-import { Body, Controller, Get, Post, Put, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  ParseIntPipe,
+  Post,
+  Put,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User, UserService } from './user.service';
+import { RoleGuard } from '../guards/role.guard';
 
 @Controller('user')
 export class UserController {
@@ -15,14 +26,14 @@ export class UserController {
   }
 
   @Get(':id')
-  getUser(@Query('id') id: string) {
+  getUserById(@Query('id', ParseIntPipe) id: number) {
     const users = [
       { id: 1, name: 'John Doe' },
       { id: 2, name: 'Jane Smith' },
       { id: 3, name: 'Alice Johnson' },
     ];
 
-    return users.find((user) => user.id === parseInt(id));
+    return users.find((user) => user.id === id);
   }
 
   @Post()
@@ -34,10 +45,16 @@ export class UserController {
   }
 
   @Put(':id')
-  updateUser(@Query('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return {
-      message: `User with ID ${id} updated successfully`,
-      data: { id, ...updateUserDto },
-    };
+  updateUser(
+    @Query('id', ParseIntPipe) id: number,
+    @Body() updateUserDto: UpdateUserDto,
+  ) {
+    return this.userService.updateUser(id, updateUserDto);
+  }
+
+  @Delete(':id')
+  @UseGuards(RoleGuard)
+  deleteUser(@Query('id', ParseIntPipe) id: number) {
+    return this.userService.deleteUser(id);
   }
 }
