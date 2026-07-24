@@ -11,16 +11,23 @@ log() {
   echo "========================================"
 }
 
-log "Running lint"
-npm run lint
+run_step() {
+  local description="$1"
+  shift
 
-log "Running format"
-npm run format
+  log "$description"
 
-log "Running tests"
-npm test
+  if "$@"; then
+    echo "$description completed successfully."
+  else
+    echo "$description failed."
+    exit 1
+  fi
+}
 
-log "Running build"
-npm run build
+run_step "Running lint" npm run lint
+run_step "Running format" npm run format
+run_step "Running tests" npm test
+run_step "Running build" npm run build
 
 log "Verification completed successfully!"
