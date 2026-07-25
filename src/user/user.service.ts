@@ -1,13 +1,19 @@
 import { Injectable } from '@nestjs/common';
-import { LoggerService } from '../logger/logger.service';
-import { RegisterUserDto } from '../dto/register-user.dto';
+import { LoggerService } from '../utils/logger/logger.service';
+import { RegisterUserDto } from '../utils/dto/register-user.dto';
+import { InjectModel } from '@nestjs/mongoose';
+import { User } from '../schemas/user.schema';
+import { Model } from 'mongoose';
 @Injectable()
 export class UserService {
-  constructor(private readonly logger: LoggerService) {}
+  constructor(
+    private readonly logger: LoggerService,
+    @InjectModel(User.name) private readonly userModel: Model<User>,
+  ) {}
 
-  createUser(registerUserDto: RegisterUserDto) {
-    this.logger.log(`Creating user with email: ${registerUserDto.email}`);
-    // Logic to create a user in the database would go here
-    return { message: 'User created successfully' };
+  async createUser(registerUserDto: RegisterUserDto) {
+    this.logger.log('Creating a new user with:', registerUserDto);
+
+    return await this.userModel.create(registerUserDto);
   }
 }
