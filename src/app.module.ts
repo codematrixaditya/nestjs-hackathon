@@ -5,9 +5,10 @@ import { LoggerService } from './logger/logger.service';
 import { UserModule } from './user/user.module';
 import { ApiKeyMiddleware } from './middleware/api-key.middleware';
 import { UserController } from './user/user.controller';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
-  imports: [UserModule],
+  imports: [UserModule, AuthModule],
   controllers: [AppController],
   providers: [AppService, LoggerService],
 })
