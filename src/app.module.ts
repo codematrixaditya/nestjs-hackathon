@@ -5,14 +5,20 @@ import { LoggerService } from './utils/logger/logger.service';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { MongooseModule } from '@nestjs/mongoose';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
     UserModule,
     AuthModule,
     ConfigModule.forRoot(),
-    MongooseModule.forRoot(process.env.MONGODB_URL as string),
+    MongooseModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => ({
+        uri: config.get<string>('MONGODB_URL'),
+      }),
+    }),
   ],
   controllers: [AppController],
   providers: [AppService, LoggerService],
