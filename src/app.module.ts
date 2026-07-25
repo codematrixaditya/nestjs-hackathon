@@ -12,8 +12,10 @@ import { AuthModule } from './auth/auth.module';
   controllers: [AppController],
   providers: [AppService, LoggerService],
 })
-export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer): void {
-    consumer.apply(ApiKeyMiddleware).forRoutes(UserController);
-  }
-}
+export class AppModule {}
+
+// export class AppModule implements NestModule {
+//   configure(consumer: MiddlewareConsumer): void {
+//     consumer.apply(ApiKeyMiddleware).forRoutes(UserController);
+//   }
+// }
