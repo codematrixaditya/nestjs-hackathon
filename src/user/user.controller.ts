@@ -9,8 +9,8 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { CreateUserDto } from '../dto/create-user.dto';
+import { UpdateUserDto } from '../dto/update-user.dto';
 import { User, UserService } from './user.service';
 import { RoleGuard } from '../guards/role.guard';
 
@@ -18,7 +18,7 @@ import { RoleGuard } from '../guards/role.guard';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Get()
+  @Get('all')
   getUsers(@Query('name') name: string): User[] {
     const users = this.userService.findAllUsers(name);
 
@@ -36,15 +36,12 @@ export class UserController {
     return users.find((user) => user.id === id);
   }
 
-  @Post()
+  @Post('create-user')
   createUser(@Body() createUserDto: CreateUserDto) {
-    return {
-      message: 'User created successfully',
-      data: createUserDto,
-    };
+    return this.userService.createUser(createUserDto);
   }
 
-  @Put(':id')
+  @Put('update-user/:id')
   updateUser(
     @Query('id', ParseIntPipe) id: number,
     @Body() updateUserDto: UpdateUserDto,
